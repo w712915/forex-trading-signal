@@ -53,7 +53,7 @@ BTCUSD の価格データをリアルタイムで取得し、テクニカル指�
 1. リポジトリのクローン
 
 ```bash
-git clone [repository-url]
+git clone https://github.com/w712915/forex-trading-signal.git
 cd forex-trading-signal
 ```
 
@@ -67,7 +67,7 @@ npm install
    `.env`ファイルを作成し、Alpha Vantage API キーを設定：
 
 ```bash
-VITE_ALPHA_VANTAGE_API_KEY=あなたのAPIキー
+cp .env.example .env
 ```
 
 4. アプリケーションの起動
