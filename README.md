@@ -1,50 +1,87 @@
-# React + TypeScript + Vite
+# BTC/USD Trading Signal Generator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+BTCUSD の価格データをリアルタイムで取得し、テクニカル指標に基づいてトレードシグナルを生成する Web アプリケーション。
 
-Currently, two official plugins are available:
+## 機能
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- BTC/USD のリアルタイム価格取得（5 分間隔）
+- テクニカル指標に基づくトレードシグナル生成（BUY/SELL/HOLD）
+- 価格とシグナルの可視化
 
-## Expanding the ESLint configuration
+## 技術スタック
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- React + TypeScript
+- Material-UI
+- Alpha Vantage API
+- Axios
 
-- Configure the top-level `parserOptions` property like this:
+## システム構成
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### 1. データ取得 (`src/api/forexApi.ts`)
+
+- Alpha Vantage API を使用して BTC/USD のリアルタイム価格を取得
+- 環境変数で管理された API キーを使用
+
+### 2. データ管理 (`src/utils/dataStore.ts`)
+
+- 最新 100 件の価格データを保持
+- FIFO（First In First Out）方式でデータを管理
+
+### 3. シグナル生成 (`src/utils/signalGenerator.ts`)
+
+テクニカル指標の計算と判断：
+
+- SMA（単純移動平均）
+  - 短期：5 期間
+  - 長期：20 期間
+- RSI（相対力指数）：14 期間
+
+トレードシグナルの判定条件：
+
+- BUY: 短期 SMA > 長期 SMA かつ RSI < 65
+- SELL: 短期 SMA < 長期 SMA かつ RSI > 35
+- HOLD: 上記以外
+
+### 4. UI (`src/App.tsx`, `src/components/ForexChart.tsx`)
+
+- 現在の価格とトレードシグナルの表示
+- チャートによる価格推移の可視化
+- 5 分ごとの自動更新
+
+## セットアップ
+
+1. リポジトリのクローン
+
+```bash
+git clone [repository-url]
+cd forex-trading-signal
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+2. 依存パッケージのインストール
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+npm install
 ```
+
+3. 環境変数の設定
+   `.env`ファイルを作成し、Alpha Vantage API キーを設定：
+
+```bash
+VITE_ALPHA_VANTAGE_API_KEY=あなたのAPIキー
+```
+
+4. アプリケーションの起動
+
+```bash
+npm run dev
+```
+
+## 注意事項
+
+- Alpha Vantage API の無料版を使用する場合、API コール制限があります
+- このアプリケーションは教育目的で作成されており、実際の投資判断には使用しないでください
+- テクニカル指標のパラメータは暗号資産市場の特性を考慮して調整されていますが、必要に応じて変更可能です
+
+## ライセンス
+
+MIT
