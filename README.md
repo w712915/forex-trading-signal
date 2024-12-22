@@ -67,7 +67,7 @@ npm install
    `.env`ファイルを作成し、Alpha Vantage API キーを設定
 
 ```bash
-cp .env.example .env
+cp env.example .env
 ```
 
 4. アプリケーションの起動
